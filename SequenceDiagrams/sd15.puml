@@ -3,7 +3,7 @@
 title SD15. Đăng ký tài khoản giáo viên
 
 actor "Instructor" as Actor
-boundary "view/\nRegisterInstructorPage" as RegisterInstructorPage
+boundary "views/\nRegisterInstructorPage" as RegisterInstructorPage
 control "UserService"
 control "UserController"
 

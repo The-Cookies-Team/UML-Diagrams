@@ -3,10 +3,10 @@
 title SD10. Quản lý giỏ hàng
 
 actor "Student" as Actor
-boundary "view/\nCartPage" as CartPage
-boundary "view/\nCourseIntro" as CourseIntro
-boundary "view/\nPayCoursePage" as PayCourse
-boundary "component/\nCartItem" as CartItem
+boundary "views/\nCartPage" as CartPage
+boundary "views/\nCourseIntro" as CourseIntro
+boundary "views/\nPayCoursePage" as PayCourse
+boundary "components/\nCartItem" as CartItem
 boundary "components/\nCourseCard" as CourseCard
 entity "UserModel"
 control "CartItemService"

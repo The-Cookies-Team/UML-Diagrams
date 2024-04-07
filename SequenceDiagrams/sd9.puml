@@ -3,8 +3,8 @@
 title SD9. Xem thông tin chi tiết giáo viên
 
 actor "Student, Admin" as Actor
-boundary "view/\nUserDetailPage" as UserDetailPage
-boundary "view/\nCourseIntro" as CourseIntro
+boundary "views/\nUserDetailPage" as UserDetailPage
+boundary "views/\nCourseIntro" as CourseIntro
 boundary "components/\nCourseCard" as CourseCard
 control "UserService"
 control "UserController"

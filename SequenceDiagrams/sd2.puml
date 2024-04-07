@@ -3,8 +3,8 @@
 title SD2. Xem danh sách khóa học theo tiêu chí
 
 actor "Student"
-boundary "view/\nHomePage" as HomePage
-boundary "view/\nCourseIntro" as CourseIntro
+boundary "views/\nHomePage" as HomePage
+boundary "views/\nCourseIntro" as CourseIntro
 boundary "components/\nCourseCard" as CourseCard
 control "CourseService"
 control "CourseController"

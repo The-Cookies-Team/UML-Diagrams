@@ -3,8 +3,8 @@
 title SD16. Tạo khóa học
 
 actor "Instructor" as Actor
-boundary "view/\nCreateCoursePage" as CreateCoursePage
-boundary "view/\nMyCreatedCoursesPage" as MyCreatedCoursesPage
+boundary "views/\nCreateCoursePage" as CreateCoursePage
+boundary "views/\nMyCreatedCoursesPage" as MyCreatedCoursesPage
 control "CourseService"
 control "CourseController"
 entity "CourseModel"
@@ -17,7 +17,7 @@ activate CreateCoursePage
 CreateCoursePage -> CreateCoursePage: 2. handleCreate()
 CreateCoursePage -> CourseService: 3. createCourse()
 activate CourseService
-CourseService -> CourseController: 4. router.post("/create", createCourse)
+CourseService -> CourseController: 4. router.post("/", createCourse)
 activate CourseController
 CourseController -> CourseModel: 5. calls model
 activate CourseModel
