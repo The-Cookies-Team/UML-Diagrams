@@ -1,0 +1,99 @@
+@startuml
+
+title SD10. Quản lý giỏ hàng
+
+actor "Student" as Actor
+boundary "view/\nCartPage" as CartPage
+boundary "view/\nCourseIntro" as CourseIntro
+boundary "view/\nPayCoursePage" as PayCourse
+boundary "component/\nCartItem" as CartItem
+boundary "components/\nCourseCard" as CourseCard
+entity "UserModel"
+control "CartItemService"
+control "CartItemController"
+entity "CartItemModel"
+control "CartController"
+entity "CartModel"
+control "CourseController"
+entity "CourseModel"
+database "Database" as Database
+
+activate Actor
+Actor -> CartPage: 1. redirects to ../cart
+deactivate Actor
+CartPage -> UserModel: 2. User.getCart()
+activate CartPage
+activate UserModel
+UserModel -> CartController: 3. router.get("/user", getUserCart)
+activate CartController
+CartController -> CartModel: 4. calls model
+activate CartModel
+CartModel -> Database: 5. Cart.find({user})
+activate Database
+Database --> CartController: 6. return Cart
+CartController --> UserModel: 7. sends res.json
+deactivate CartController
+UserModel --> CartPage: 8. return Cart
+deactivate UserModel
+CartPage -> CartModel: 9. Cart.getListCourses()
+CartModel -> CourseController: 10. router.get("/cart", getCartCourses)
+activate CourseController
+CourseController -> CourseModel: 11. calls model
+activate CourseModel
+CourseModel -> Database: 12. Course.find({cart})
+deactivate CourseModel
+Database --> CourseController: 13. return List<Course>
+CourseController --> CartModel: 14. sends res.json
+deactivate CourseController
+CartModel --> CartPage: 15. return List<Course>
+deactivate CartModel
+CartPage -> CartItem: 16. calls component
+activate CartItem
+CartItem --> CartPage: 17. displays data
+deactivate CartItem
+
+opt User clicks a course
+CartPage -> CourseIntro: 18. redirects to ../courseIntro
+ref over CourseIntro
+**SD5. Xem giới thiệu khóa học**
+end ref
+end group
+
+opt User deletes a course
+CartPage -> CartPage: 19. handleDelete(_id)
+CartPage -> CartItemService: 20. deleteCartItem(_id)
+activate CartItemService
+CartItemService -> CartItemController: 21. router.delete("/:id", deleteCartItem)
+activate CartItemController
+CartItemController -> CartItemModel: 22. calls model
+activate CartItemModel
+CartItemModel -> Database: 23. CartItem.delete()
+Database --> CartItemController: 24. callback
+CartItemController --> CartItemService: 25. sends res.json
+CartItemService --> CartPage: 26. displays message
+CartPage -> CartPage: 27. updates display
+end group
+
+opt User chooses which courses to pay
+CartPage -> CartPage: 28. handleCheckout(_id)
+loop forEach List<Course>
+CartPage -> PayCourse: 29. redirects to ../payCourse
+ref over PayCourse
+**SD6. Mua khóa học**
+end ref
+CartPage -> CartItemService: 30. deleteCartItem(_id)
+CartItemService -> CartItemController: 31. router.delete("/:id", deleteCartItem)
+CartItemController -> CartItemModel: 32. calls model
+CartItemModel -> Database: 33. CartItem.delete()
+deactivate CartItemModel
+Database --> CartItemController: 34. callback
+deactivate Database
+CartItemController --> CartItemService: 35. sends res.json
+deactivate CartItemController
+CartItemService --> CartPage: 36. callback
+deactivate CartItemService
+end
+CartPage -> CartPage: 37. updates display
+end
+deactivate CartPage
+@enduml

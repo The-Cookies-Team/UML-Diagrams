@@ -1,0 +1,59 @@
+@startuml
+
+title SD9. Xem thông tin chi tiết giáo viên
+
+actor "Student, Admin" as Actor
+boundary "view/\nUserDetailPage" as UserDetailPage
+boundary "view/\nCourseIntro" as CourseIntro
+boundary "components/\nCourseCard" as CourseCard
+control "UserService"
+control "UserController"
+entity "UserModel"
+control "CourseController"
+entity "CourseModel"
+database "Database" as Database
+
+activate Actor
+Actor -> UserDetailPage: 1. redirects to ../userDetail
+deactivate Actor
+activate UserDetailPage
+UserDetailPage -> UserService: 2. getUser(_id)
+activate UserService
+UserService -> UserController: 3. router.get("/:id", getUser)
+activate UserController
+UserController -> UserModel: 4. calls model
+activate UserModel
+UserModel -> Database: 5. User.findById(_id)
+activate Database
+Database --> UserController: 6. return User
+UserController --> UserService: 7. sends res.json
+deactivate UserController
+UserService --> UserDetailPage: 8. return User
+deactivate UserService
+UserDetailPage -> UserModel: 9. User.getListCourses()
+UserModel -> CourseController: 10. router.get("/userCourses", getUserCourses)
+activate CourseController
+CourseController -> CourseModel: 11. calls model
+activate CourseModel
+CourseModel -> Database: 12. Course.find({user})
+deactivate CourseModel
+Database --> CourseController: 13. return List<Course>
+deactivate Database
+CourseController --> UserModel: 14. sends res.json
+deactivate CourseController
+UserModel --> UserDetailPage: 15. return List<Course>
+deactivate UserModel
+UserDetailPage -> CourseCard: 16. calls component
+activate CourseCard
+CourseCard --> UserDetailPage: 17. displays data
+deactivate CourseCard
+
+opt User clicks a course
+UserDetailPage -> CourseIntro: 18. redirects to ../courseIntro
+deactivate UserDetailPage
+ref over CourseIntro
+**SD5. Xem giới thiệu khóa học**
+end ref
+end group
+
+@enduml

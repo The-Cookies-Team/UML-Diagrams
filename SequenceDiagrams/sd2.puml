@@ -2,39 +2,53 @@
 
 title SD2. Xem danh sách khóa học theo tiêu chí
 
-'participant "WebUI" as W
-participant "Orchestra" as O
-participant "Storage" as S
-'participant "Transform" as T
-participant "Publisher" as P
+actor "Student"
+boundary "view/\nHomePage" as HomePage
+boundary "view/\nCourseIntro" as CourseIntro
+boundary "components/\nCourseCard" as CourseCard
+control "CourseService"
+control "CourseController"
+entity "CourseModel"
+database "Database"
 
-activate O
-P -> P: Startup (celeryd -Q queue_name)
-activate P
+activate Student
+Student -> HomePage: 1. redirects to ../home
+deactivate Student
+activate HomePage
+HomePage -> CourseService: 2. getNewestCourses()
+activate CourseService
+CourseService -> CourseController: 3. router.get("/", getNewestCourses)
+activate CourseController
+CourseController -> CourseModel: 4. calls model
+activate CourseModel
+CourseModel -> Database: 5. Course.find({}).sort({})
+activate Database
+Database --> CourseController: 6. return List<Course>
+CourseController --> CourseService: 7. sends res.json
+CourseService --> HomePage: 8. return List<Course>
+HomePage -> CourseService: 9. getBestSellerCourses()
+CourseService -> CourseController: 10. router.get("/", getBestSellerCourses)
+CourseController -> CourseModel: 11. calls model
+CourseModel -> Database: 12. Course.find({}).sort({})
+deactivate CourseModel
+Database --> CourseController: 13. return List<Course>
+deactivate Database
+CourseController --> CourseService: 14. sends res.json
+deactivate CourseController
+CourseService --> HomePage: 15. return List<Course>
+deactivate CourseService
+HomePage -> CourseCard: 16. calls component
+activate CourseCard
+CourseCard --> HomePage: 17. displays data
+deactivate CourseCard
 
-P -> O: << get next publish job from queue >>
-O --> P: << next publish job is ... >>
+opt User clicks a course
+HomePage -> CourseIntro: 18. redirects to ../courseIntro
+deactivate HomePage
+ref over CourseIntro
+**SD5. Xem giới thiệu khóa học**
+end ref
+end group
 
-note right: <b>concurrency_value</b> jobs can be threated\nsimultaneously (multithreading)
-P -> P: Launch new block copy
-P -> S: << read media from medias path >>
-activate S
-S --> P: << read block 1/N from media >>
-P --> P: << write block 1/N to local web path >>
-P --> O: << update job status & statistics ... >>
-S --> P: << read block 2/N from media >>
-P --> P: << write block 2/N to local web path >>
-S --> P: << read block N/N from media >>
-P --> P: << write block N/N to local web path >>
-S --> P: << end of file >>
-deactivate S
-P --> O: << update job status & statistics ... >>
-P -> O: POST /publish/callback\n  {"job_id": "<uuid_of_job>", "publish_uri": "...", "status": "SUCCESS"}
-activate O
-O -> O: Set media status=PUBLISHED + publish_uris[job_id]=publish_uri into MongoDB
-O --> P: <b>OK 200</b> {"status": 200, value="Your work is much appreciated, thanks !"}
-
-deactivate P
-deactivate O
 
 @enduml
