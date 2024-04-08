@@ -33,9 +33,12 @@ activate LessonController
 LessonController -> LessonModel: 4. calls model
 activate LessonModel
 LessonModel -> Database: 5. Lesson.find({course})
+deactivate LessonModel
 activate Database
 Database --> LessonController: 6. return List<Lesson>
+deactivate Database
 LessonController --> CourseModel: 7. sends res.json
+deactivate LessonController
 CourseModel --> UpdateCourseDetailPage: 8. return List<Lesson>
 deactivate CourseModel
 UpdateCourseDetailPage -> Lesson: 9. calls component
@@ -48,11 +51,18 @@ UpdateCourseDetailPage -> UpdateCourseDetailPage: 11. handleCreate()
 UpdateCourseDetailPage -> LessonService: 12. createLesson()
 activate LessonService
 LessonService -> LessonController: 13. router.post("/", createLesson)
+activate LessonController
 LessonController -> LessonModel: 14. calls model
+activate LessonModel
 LessonModel -> Database: 15. Lesson.create({})
+deactivate LessonModel
+activate Database
 Database --> LessonController: 16. callback
+deactivate Database
 LessonController --> LessonService: 17. sends res.json
+deactivate LessonController
 LessonService --> UpdateCourseDetailPage: 18. callback
+deactivate LessonService
 UpdateCourseDetailPage-> UpdateLessonPage: 19. redirects to ../updateLesson
 activate UpdateLessonPage
 end
@@ -60,10 +70,16 @@ end
 opt User deletes a lesson
 UpdateCourseDetailPage -> UpdateCourseDetailPage: 20. handleDelete()
 UpdateCourseDetailPage -> LessonService: 21. deleteLesson()
+activate LessonService
 LessonService -> LessonController: 22. router.delete("/", deleteLesson)
+activate LessonController
 LessonController -> LessonModel: 23. calls model
+activate LessonModel
 LessonModel -> Database: 24. Lesson.delete({})
+deactivate LessonModel
+activate Database
 Database --> LessonController: 25. callback
+deactivate Database
 LessonController --> LessonService: 26. sends res.json
 deactivate LessonController
 LessonService --> UpdateCourseDetailPage: 27. displays message
@@ -75,13 +91,18 @@ opt User clicks a lesson
 UpdateCourseDetailPage -> UpdateLessonPage: 29. redirects to ../updateLesson
 deactivate UpdateCourseDetailPage
 UpdateLessonPage -> LessonModel: 30. Lesson.getListDocuments()
+activate LessonModel
 LessonModel -> DocumentController: 31. router.get("/lesson", getLessonDocuments)
 activate DocumentController
 DocumentController -> DocumentModel: 32. calls model
 activate DocumentModel
 DocumentModel -> Database: 33. Document.find({lesson})
+deactivate DocumentModel
+activate Database
 Database --> DocumentController: 34. return List<Document>
+deactivate Database
 DocumentController --> LessonModel: 35. sends res.json
+deactivate DocumentController
 LessonModel --> UpdateLessonPage: 36. return List<Document>
 
 UpdateLessonPage -> LessonModel: 37. Lesson.getListComments()
@@ -90,8 +111,12 @@ activate CommentController
 CommentController -> CommentModel: 39. calls model
 activate CommentModel
 CommentModel -> Database: 40. Comment.find({lesson})
+deactivate CommentModel
+activate Database
 Database --> CommentController: 41. return List<Comment>
+deactivate Database
 CommentController --> LessonModel: 42. sends res.json
+deactivate CommentController
 LessonModel --> UpdateLessonPage: 43. return List<Comment>
 deactivate LessonModel
 
@@ -112,11 +137,18 @@ CreateDocumentPage -> CreateDocumentPage: 49. handleCreate()
 CreateDocumentPage -> DocumentService: 50. createDocument()
 activate DocumentService
 DocumentService -> DocumentController: 51. router.post("/", createDocument)
+activate DocumentController
 DocumentController -> DocumentModel: 52. calls model
+activate DocumentModel
 DocumentModel -> Database: 53. Document.create({})
+deactivate DocumentModel
+activate Database
 Database --> DocumentController: 54. callback
+deactivate Database
 DocumentController --> DocumentService: 55. sends res.json
+deactivate DocumentController
 DocumentService --> CreateDocumentPage: 56. callback
+deactivate DocumentService
 CreateDocumentPage -> UpdateLessonPage: 57. redirects to ../updateLesson
 deactivate CreateDocumentPage
 end
@@ -124,11 +156,16 @@ end
 opt User deletes a document
 UpdateLessonPage -> UpdateLessonPage: 58. handleDelete()
 UpdateLessonPage -> DocumentService: 59. deleteDocument()
+activate DocumentService
 DocumentService -> DocumentController: 60. router.delete("/", deleteDocument)
+activate DocumentController
 DocumentController -> DocumentModel: 61. calls model
+activate DocumentModel
 DocumentModel -> Database: 62. Document.delete({})
 deactivate DocumentModel
+activate Database
 Database --> DocumentController: 63. callback
+deactivate Database
 DocumentController --> DocumentService: 64. sends res.json
 deactivate DocumentController
 DocumentService --> UpdateLessonPage: 65. callback
@@ -148,9 +185,12 @@ CreateCommentPage -> CreateCommentPage: 70. handleCreate(parentId)
 CreateCommentPage -> CommentService: 71. createComment(parentId)
 end
 CommentService -> CommentController: 72. router.post("/", createComment)
+activate CommentController
 CommentController -> CommentModel: 73. calls model
+activate CommentModel
 CommentModel -> Database: 74. Comment.create({})
 deactivate CommentModel
+activate Database
 Database --> CommentController: 75. callback
 deactivate Database
 CommentController --> CommentService: 76. sends res.json

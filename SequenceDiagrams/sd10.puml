@@ -21,8 +21,8 @@ database "Database" as Database
 activate Actor
 Actor -> CartPage: 1. redirects to ../cart
 deactivate Actor
-CartPage -> UserModel: 2. User.getCart()
 activate CartPage
+CartPage -> UserModel: 2. User.getCart()
 activate UserModel
 UserModel -> CartController: 3. router.get("/user", getUserCart)
 activate CartController
@@ -43,6 +43,7 @@ activate CourseModel
 CourseModel -> Database: 12. Course.find({cart})
 deactivate CourseModel
 Database --> CourseController: 13. return List<Course>
+deactivate Database
 CourseController --> CartModel: 14. sends res.json
 deactivate CourseController
 CartModel --> CartPage: 15. return List<Course>
@@ -68,9 +69,14 @@ activate CartItemController
 CartItemController -> CartItemModel: 22. calls model
 activate CartItemModel
 CartItemModel -> Database: 23. CartItem.delete()
+deactivate CartItemModel
+activate Database
 Database --> CartItemController: 24. callback
+deactivate Database
 CartItemController --> CartItemService: 25. sends res.json
+deactivate CartItemController
 CartItemService --> CartPage: 26. displays message
+deactivate CartItemService
 CartPage -> CartPage: 27. updates display
 end group
 
@@ -82,10 +88,14 @@ ref over PayCourse
 **SD6. Mua khóa học**
 end ref
 CartPage -> CartItemService: 30. deleteCartItem(_id)
+activate CartItemService
 CartItemService -> CartItemController: 31. router.delete("/:id", deleteCartItem)
+activate CartItemController
 CartItemController -> CartItemModel: 32. calls model
+activate CartItemModel
 CartItemModel -> Database: 33. CartItem.delete()
 deactivate CartItemModel
+activate Database
 Database --> CartItemController: 34. callback
 deactivate Database
 CartItemController --> CartItemService: 35. sends res.json
