@@ -17,7 +17,7 @@ deactivate Student
 activate HomePage
 HomePage -> CourseService: 2. getNewestCourses()
 activate CourseService
-CourseService -> CourseController: 3. router.get("/", getNewestCourses)
+CourseService -> CourseController: 3. sends GET request
 activate CourseController
 CourseController -> CourseModel: 4. calls model
 activate CourseModel
@@ -27,7 +27,7 @@ Database --> CourseController: 6. return List<Course>
 CourseController --> CourseService: 7. sends res.json
 CourseService --> HomePage: 8. return List<Course>
 HomePage -> CourseService: 9. getBestSellerCourses()
-CourseService -> CourseController: 10. router.get("/", getBestSellerCourses)
+CourseService -> CourseController: 10. sends GET request
 CourseController -> CourseModel: 11. calls model
 CourseModel -> Database: 12. Course.find({}).sort({})
 deactivate CourseModel

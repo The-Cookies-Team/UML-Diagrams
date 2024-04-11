@@ -6,8 +6,6 @@ actor "Student, Admin" as Actor
 boundary "views/\nUserDetailPage" as UserDetailPage
 boundary "views/\nCourseIntro" as CourseIntro
 boundary "components/\nCourseCard" as CourseCard
-control "UserService"
-control "UserController"
 entity "UserModel"
 control "CourseController"
 entity "CourseModel"
@@ -17,43 +15,31 @@ activate Actor
 Actor -> UserDetailPage: 1. redirects to ../userDetail
 deactivate Actor
 activate UserDetailPage
-UserDetailPage -> UserService: 2. getUser(_id)
-activate UserService
-UserService -> UserController: 3. router.get("/:id", getUser)
-activate UserController
-UserController -> UserModel: 4. calls model
+UserDetailPage -> UserModel: 2. User.getListCourses()
 activate UserModel
-UserModel -> Database: 5. User.findById(_id)
-activate Database
-Database --> UserController: 6. return User
-UserController --> UserService: 7. sends res.json
-deactivate UserController
-UserService --> UserDetailPage: 8. return User
-deactivate UserService
-UserDetailPage -> UserModel: 9. User.getListCourses()
-UserModel -> CourseController: 10. router.get("/userCourses", getUserCourses)
+UserModel -> CourseController: 3. sends GET request
 activate CourseController
-CourseController -> CourseModel: 11. calls model
+CourseController -> CourseModel: 4. calls model
 activate CourseModel
-CourseModel -> Database: 12. Course.find({user})
+CourseModel -> Database: 5. Course.find({user})
 deactivate CourseModel
-Database --> CourseController: 13. return List<Course>
+Database --> CourseController: 6. return List<Course>
 deactivate Database
-CourseController --> UserModel: 14. sends res.json
+CourseController --> UserModel: 7. sends res.json
 deactivate CourseController
-UserModel --> UserDetailPage: 15. return List<Course>
+UserModel --> UserDetailPage: 8. return List<Course>
 deactivate UserModel
-UserDetailPage -> CourseCard: 16. calls component
+UserDetailPage -> CourseCard: 9. calls component
 activate CourseCard
-CourseCard --> UserDetailPage: 17. displays data
+CourseCard --> UserDetailPage: 10. displays data
 deactivate CourseCard
 
 opt User clicks a course
-UserDetailPage -> CourseIntro: 18. redirects to ../courseIntro
+UserDetailPage -> CourseIntro: 11. redirects to ../courseIntro
 deactivate UserDetailPage
 ref over CourseIntro
 **SD5. Xem giới thiệu khóa học**
 end ref
-end group
+end
 
 @enduml

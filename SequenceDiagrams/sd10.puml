@@ -7,7 +7,6 @@ boundary "views/\nCartPage" as CartPage
 boundary "views/\nCourseIntro" as CourseIntro
 boundary "views/\nPayCoursePage" as PayCourse
 boundary "components/\nCartItem" as CartItem
-boundary "components/\nCourseCard" as CourseCard
 entity "UserModel"
 control "CartItemService"
 control "CartItemController"
