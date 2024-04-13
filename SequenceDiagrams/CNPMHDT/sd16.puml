@@ -11,26 +11,26 @@ entity "CourseModel"
 database "Database" as Database
 
 activate Actor
-Actor -> CreateCoursePage: 1. redirects to ../createCourse
+Actor -> CreateCoursePage: 1. redirect to ../createCourse
 deactivate Actor
 activate CreateCoursePage
 CreateCoursePage -> CreateCoursePage: 2. handleCreate()
-CreateCoursePage -> CourseService: 3. createCourse()
+CreateCoursePage -> CourseService: 3. createCourse(userId)
 activate CourseService
-CourseService -> CourseController: 4. router.post("/", createCourse)
+CourseService -> CourseController: 4. router.post("/createCourse", createCourse)
 activate CourseController
-CourseController -> CourseModel: 5. calls model
+CourseController -> CourseModel: 5. call model
 activate CourseModel
-CourseModel -> Database: 6. Course.create({})
+CourseModel -> Database: 6. Course.create({userId, title, picture,\ndescription, price, status, visibility})
 deactivate CourseModel
 activate Database
 Database --> CourseController: 7. callback
 deactivate Database
-CourseController --> CourseService: 8. sends res.json
+CourseController --> CourseService: 8. send res.json
 deactivate CourseController
-CourseService --> CreateCoursePage: 9. callback
+CourseService --> CreateCoursePage: 9. display message
 deactivate CourseService
-CreateCoursePage -> MyCreatedCoursesPage: 10. redirects to ../myCreatedCourses
+CreateCoursePage -> MyCreatedCoursesPage: 10. redirect to ../myCreatedCourses
 deactivate CreateCoursePage
 ref over MyCreatedCoursesPage
 **SD17. Quản lý danh sách khóa học đã tạo**

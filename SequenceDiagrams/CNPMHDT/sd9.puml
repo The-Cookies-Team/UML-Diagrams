@@ -1,0 +1,46 @@
+@startuml
+
+title SD9. Xem thông tin chi tiết giáo viên
+
+actor "Student, Admin" as Actor
+boundary "views/\nUserDetailPage" as UserDetailPage
+boundary "views/\nCourseIntro" as CourseIntro
+boundary "components/\nCourseCard" as CourseCard
+control "CourseService"
+control "CourseController"
+entity "CourseModel"
+database "Database" as Database
+
+activate Actor
+Actor -> UserDetailPage: 1. redirect to ../userDetail
+deactivate Actor
+activate UserDetailPage
+UserDetailPage -> CourseService: 2. getListCoursesOfInstructor(userId)
+activate CourseService
+CourseService -> CourseController: 3. router.get(\n"/getListCoursesOfInstructor",\ngetListCoursesOfInstructor)
+activate CourseController
+CourseController -> CourseModel: 4. call model
+activate CourseModel
+CourseModel -> Database: 5. Course.find({userId})
+deactivate CourseModel
+Database --> CourseController: 6. return List<Course>
+deactivate Database
+CourseController --> CourseService: 7. send res.json
+deactivate CourseController
+CourseService --> UserDetailPage: 8. return List<Course>
+deactivate CourseService
+loop forEach List<Course>
+UserDetailPage -> CourseCard: 9. call component
+activate CourseCard
+CourseCard --> UserDetailPage: 10. display data
+deactivate CourseCard
+end
+opt user clicks a course
+UserDetailPage -> CourseIntro: 11. redirect to ../courseIntro
+deactivate UserDetailPage
+ref over CourseIntro
+**SD5. Xem giới thiệu khóa học**
+end ref
+end
+
+@enduml

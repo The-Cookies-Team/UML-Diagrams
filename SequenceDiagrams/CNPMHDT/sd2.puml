@@ -1,0 +1,86 @@
+@startuml
+
+title SD2. Xem danh sách khóa học theo tiêu chí
+
+actor "Student" as Actor
+boundary "views/\nHomePage" as HomePage
+boundary "views/\nCourseIntro" as CourseIntro
+boundary "components/\nCourseCard" as CourseCard
+control "CourseService"
+control "CourseController"
+entity "CourseModel"
+entity "InvoiceItem"
+database "Database"
+
+activate Actor
+Actor -> HomePage: 1. redirect to ../home
+deactivate Actor
+
+activate HomePage
+HomePage -> CourseService: 2. getNewestCourses()
+
+activate CourseService
+CourseService -> CourseController: 3. router.get(\n"/getNewestCourses",\ngetNewsestCourse)
+
+activate CourseController
+CourseController -> CourseModel: 4. call model
+
+activate CourseModel
+CourseModel -> Database: 5. Course.find()\n.sort({createdAt: "desc"}).limit(5)
+deactivate CourseModel
+
+activate Database
+Database --> CourseController: 6. return List<Course>
+deactivate Database
+
+CourseController --> CourseService: 7. send res.json
+CourseService --> HomePage: 8. return List<Course>
+HomePage -> CourseService: 9. getBestSellerCourses()
+CourseService -> CourseController: 10. router.get(\n"/getBestSellerCourses",\ngetBestSellerCourses)
+CourseController -> InvoiceItem: 11. calls model
+
+activate InvoiceItem
+InvoiceItem -> Database: 12. InvoiceItem.aggregate()\n.sortByCount("courseId").limit(5)
+deactivate InvoiceItem
+
+activate Database
+Database --> CourseController: 13. return List<InvoiceItem>
+deactivate Database
+
+loop forEach List<InvoiceItem>
+CourseController -> CourseModel: 14. call model
+
+activate CourseModel
+CourseModel -> Database: 15. Course.find({courseId})
+deactivate CourseModel
+
+activate Database
+Database --> CourseController: 16. return List<Course>
+deactivate Database
+
+end
+
+CourseController --> CourseService: 17. send res.json
+deactivate CourseController
+
+CourseService --> HomePage: 18. return List<Course>
+deactivate CourseService
+
+loop forEach List<Course>
+activate CourseCard
+HomePage -> CourseCard: 19. call component
+CourseCard --> HomePage: 20. display data
+deactivate CourseCard
+end
+
+opt user clicks a course
+HomePage -> CourseIntro: 21. redirect to ../courseIntro
+deactivate HomePage
+
+ref over CourseIntro
+**SD5. Xem giới thiệu khóa học**
+end ref
+end
+
+
+@enduml

@@ -1,0 +1,122 @@
+@startuml
+
+title SD10. Quản lý giỏ hàng
+
+actor "Student" as Actor
+boundary "views/\nCartPage" as CartPage
+boundary "views/\nCourseIntro" as CourseIntro
+boundary "views/\nPayCoursePage" as PayCourse
+boundary "components/\nCartItem" as CartItem
+control "CartService"
+control "CartController"
+entity "CartModel"
+control "CourseService"
+control "CourseController"
+entity "CourseModel"
+control "CartItemService"
+control "CartItemController"
+entity "CartItemModel"
+database "Database" as Database
+
+activate Actor
+Actor -> CartPage: 1. redirect to ../cart
+deactivate Actor
+
+activate CartPage
+CartPage -> CartService: 2. getCart(userId)
+activate CartService
+CartService -> CartController: 3. router.get("/", getCart)
+activate CartController
+CartController -> CartModel: 4. call model
+activate CartModel
+CartModel -> Database: 5. Cart.find({userId})
+deactivate CartModel
+activate Database
+Database --> CartController: 6. return Cart
+deactivate Database
+CartController --> CartService: 7. send res.json
+deactivate CartController
+CartService --> CartPage: 8. return Cart
+deactivate CartService
+CartPage -> CourseService: 9. getListCoursesOfCart(cartId)
+activate CourseService
+CourseService -> CourseController: 10. router.get(\n"/getListCoursesOfCart",\ngetListCoursesOfCart)
+activate CourseController
+CourseController -> CartItemModel: 11. call model
+activate CartItemModel
+CartItemModel -> Database: 12. CartItem.find({cartId})
+deactivate CartItemModel
+activate Database
+Database --> CourseController: 13. return List<CartItem>
+deactivate Database
+loop forEach List<CartItem>
+CourseController -> CourseModel: 14. call model
+activate CourseModel
+CourseModel -> Database: 15. Course.find({courseId})
+deactivate CourseModel
+activate Database
+deactivate CourseModel
+Database --> CourseController: 16. return Course
+deactivate Database
+CourseController -> CourseController: 17. List<Course>.add(Course)
+end
+CourseController --> CourseService: 18. send res.json
+deactivate CourseController
+CourseService --> CartPage: 19. return List<Course>
+deactivate CourseService
+
+loop forEach List<Course>
+
+CartPage -> CartItem: 20. call component
+
+activate CartItem
+CartItem --> CartPage: 21. display data
+deactivate CartItem
+
+end
+
+opt user clicks a cart item
+CartPage -> CourseIntro: 22. redirect to ../courseIntro
+ref over CourseIntro
+**SD5. Xem giới thiệu khóa học**
+end ref
+end group
+
+opt user deletes a cart item
+CartPage -> CartPage: 23. handleDelete(cartId, courseId)
+CartPage -> CartService: 24. deleteCartItem(cartId, courseId)
+activate CartService
+CartService -> CartController: 25. router.delete(\n"/deleteCartItem",\ndeleteCartItem)
+activate CartController
+CartController -> CartItemModel: 26. call model
+activate CartItemModel
+CartItemModel -> Database: 27. CartItem.find({cartId, courseId})
+deactivate CartItemModel
+activate Database
+Database --> CartController: 28. return CartItem
+deactivate Database
+CartController -> CartItemModel: 29. call model
+activate CartItemModel
+CartItemModel -> Database: 30. CartItem.deleteOne()
+deactivate CartItemModel
+activate Database
+Database --> CartController: 31. callback
+deactivate Database
+CartController --> CartService: 32. send res.json
+deactivate CartController
+CartService --> CartPage: 33. display message
+deactivate CartService
+CartPage -> CartPage: 34. update display
+end
+
+opt User chooses which courses to pay
+CartPage -> CartPage: 35. handleCheckout(List<Course>)
+CartPage -> PayCourse: 36. redirect to ../payCourses
+deactivate CartPage
+
+ref over PayCourse
+**SD6. Mua khóa học**
+end ref
+end
+
+@enduml

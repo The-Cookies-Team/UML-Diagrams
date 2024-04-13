@@ -1,0 +1,225 @@
+@startuml
+
+title SD19. Cập nhật chi tiết khóa học
+
+actor "Instructor" as Actor
+boundary "views/\nUpdateCourseDetailPage" as UpdateCourseDetailPage
+boundary "views/\nUpdateLessonPage" as UpdateLessonPage
+boundary "views/\nCreateDocumentPage" as CreateDocumentPage
+boundary "views/\nCreateCommentPage" as CreateCommentPage
+boundary "components/\nLesson" as Lesson
+boundary "components/\nDocument" as Document
+boundary "components/\nComment" as Comment
+entity "CourseModel"
+control "LessonService"
+control "LessonController"
+entity "LessonModel"
+control "DocumentService"
+control "DocumentController"
+entity "DocumentModel"
+control "CommentService"
+control "CommentController"
+entity "CommentModel"
+database "Database" as Database
+
+activate Actor
+Actor -> UpdateCourseDetailPage: 1. redirect to ../updateCourseDetail
+deactivate Actor
+activate UpdateCourseDetailPage
+UpdateCourseDetailPage -> LessonService: 2. getListLessonsOfCourse(courseId)
+activate LessonService
+LessonService -> LessonController: 3. router.get(\n"/getListLessonsOfCourse",\ngetListLessonsOfCourse)
+activate LessonController
+LessonController -> LessonModel: 4. call model
+activate LessonModel
+LessonModel -> Database: 5. Lesson.find({courseId})
+deactivate LessonModel
+activate Database
+Database --> LessonController: 6. return List<Lesson>
+deactivate Database
+LessonController --> LessonService: 7. send res.json
+deactivate LessonController
+LessonService --> UpdateCourseDetailPage: 8. return List<Lesson>
+deactivate LessonService
+loop forEach List<Lesson>
+UpdateCourseDetailPage -> Lesson: 9. call component
+activate Lesson
+Lesson --> UpdateCourseDetailPage: 10. display data
+deactivate Lesson
+end
+
+opt user deletes a lesson
+UpdateCourseDetailPage -> UpdateCourseDetailPage: 11. handleDelete(_id)
+UpdateCourseDetailPage -> LessonService: 12. deleteLesson(_id)
+activate LessonService
+LessonService -> LessonController: 13. router.delete("/deleteLesson:id", deleteLesson)
+activate LessonController
+LessonController -> LessonModel: 14. call model
+activate LessonModel
+LessonModel -> Database: 15. Lesson.findById(req.params.id)
+deactivate LessonModel
+activate Database
+Database --> LessonController: 16. return Lesson
+deactivate Database
+LessonController -> LessonModel: 17. call model
+activate LessonModel
+LessonModel -> Database: 18. Lesson.deleteOne()
+deactivate LessonModel
+activate Database
+Database --> LessonController: 19. callback
+deactivate Database
+LessonController --> LessonService: 20. send res.json
+deactivate LessonController
+LessonService --> UpdateCourseDetailPage: 21. display message
+deactivate LessonService
+UpdateCourseDetailPage -> UpdateCourseDetailPage: 22. update display
+end
+
+opt user creates a lesson
+UpdateCourseDetailPage -> UpdateCourseDetailPage: 23. handleCreate()
+UpdateCourseDetailPage -> LessonService: 24. createLesson(courseId)
+activate LessonService
+LessonService -> LessonController: 25. router.post("/createLesson", createLesson)
+activate LessonController
+LessonController -> LessonModel: 26. call model
+activate LessonModel
+LessonModel -> Database: 27. Lesson.create({courseId, title, description})
+deactivate LessonModel
+activate Database
+Database --> LessonController: 28. return Lesson
+deactivate Database
+LessonController --> LessonService: 29. send res.json
+deactivate LessonController
+LessonService --> UpdateCourseDetailPage: 30. return Lesson
+deactivate LessonService
+UpdateCourseDetailPage-> UpdateLessonPage: 31. redirect to ../updateLesson
+activate UpdateLessonPage
+end
+
+opt user clicks a lesson
+UpdateCourseDetailPage -> UpdateLessonPage: 32. redirect to ../updateLesson
+deactivate UpdateCourseDetailPage
+UpdateLessonPage -> DocumentService: 33. getListDocumentsOfLesson(lessonId)
+activate DocumentService
+DocumentService -> DocumentController: 34. router.get(\n"/getListDocumentsOfLesson",\ngetListDocumentsOfLesson)
+activate DocumentController
+DocumentController -> DocumentModel: 35. call model
+activate DocumentModel
+DocumentModel -> Database: 36. Document.find({lessonid})
+deactivate DocumentModel
+activate Database
+Database --> DocumentController: 37. return List<Document>
+deactivate Database
+DocumentController --> DocumentService: 38. send res.json
+deactivate DocumentController
+DocumentService --> UpdateLessonPage: 39. return List<Document>
+deactivate DocumentService
+
+UpdateLessonPage -> CommentService: 40. getListCommentsOfLesson(lessonId)
+CommentService -> CommentController: 41. router.get(\n"/getListCommentsOfLesson",\ngetListCommentsOfLesson)
+activate CommentController
+CommentController -> CommentModel: 42. call model
+activate CommentModel
+CommentModel -> Database: 43. Comment.find({lessonId})
+deactivate CommentModel
+activate Database
+Database --> CommentController: 44. return List<Comment>
+deactivate Database
+CommentController --> CommentService: 45. send res.json
+deactivate CommentController
+CommentService --> UpdateLessonPage: 46. return List<Comment>
+
+loop forEach List<Document>
+
+UpdateLessonPage -> Document: 47. call component
+activate Document
+Document --> UpdateLessonPage: 48. display data
+deactivate Document
+end
+
+loop forEach List<Comment>
+UpdateLessonPage -> Comment: 49. call component
+activate Comment
+Comment --> UpdateLessonPage: 50. display data
+deactivate Comment
+end
+
+opt user creates a document
+UpdateLessonPage -> CreateDocumentPage: 51. redirect to ../createDocument
+activate CreateDocumentPage
+CreateDocumentPage -> CreateDocumentPage: 52. handleCreate()
+CreateDocumentPage -> DocumentService: 53. createDocument(lessonId)
+activate DocumentService
+DocumentService -> DocumentController: 54. router.post("/createDocument", createDocument)
+activate DocumentController
+DocumentController -> DocumentModel: 55. call model
+activate DocumentModel
+DocumentModel -> Database: 56. Document.create({lessonId, title, description})
+deactivate DocumentModel
+activate Database
+Database --> DocumentController: 57. callback
+deactivate Database
+DocumentController --> DocumentService: 58. send res.json
+deactivate DocumentController
+DocumentService --> CreateDocumentPage: 59. callback
+deactivate DocumentService
+CreateDocumentPage -> UpdateLessonPage: 60. redirect to ../updateLesson
+deactivate CreateDocumentPage
+end
+
+opt user deletes a document
+UpdateLessonPage -> UpdateLessonPage: 61. handleDelete()
+UpdateLessonPage -> DocumentService: 62. deleteDocument(_id)
+activate DocumentService
+DocumentService -> DocumentController: 63. router.delete("/", deleteDocument)
+activate DocumentController
+DocumentController -> DocumentModel: 64. call model
+activate DocumentModel
+DocumentModel -> Database: 65. Document.findById(req.id)
+deactivate DocumentModel
+Database --> DocumentController: 66. return Document
+DocumentController -> DocumentModel: 67. call model
+activate DocumentModel
+DocumentModel -> Database: 68. Document.deleteOne()
+deactivate DocumentModel
+activate Database
+Database --> DocumentController: 69. callback
+deactivate Database
+DocumentController --> DocumentService: 70. send res.json
+deactivate DocumentController
+DocumentService --> UpdateLessonPage: 71. callback
+deactivate DocumentService
+UpdateLessonPage -> UpdateLessonPage: 72. update display
+end
+
+opt user accesses comment section
+UpdateLessonPage -> CreateCommentPage: 73. redirect to ../createComment
+activate CreateCommentPage
+alt user adds a comment
+CreateCommentPage -> CreateCommentPage: 74. handleCreate()
+CreateCommentPage -> CommentService: 75. createComment({lessonId, userId})
+activate CommentService
+else Uuer replies a comment
+CreateCommentPage -> CreateCommentPage: 76. handleCreate(parentId)
+CreateCommentPage -> CommentService: 77. createComment({lessonId, userId, parentId})
+end
+CommentService -> CommentController: 78. router.post("/createComment", createComment)
+activate CommentController
+CommentController -> CommentModel: 79. call model
+activate CommentModel
+CommentModel -> Database: 80. Comment.create(\n{lessonId, userId, parentId, title, description})
+deactivate CommentModel
+activate Database
+Database --> CommentController: 81. callback
+deactivate Database
+CommentController --> CommentService: 82. send res.json
+deactivate CommentController
+CommentService --> CreateCommentPage: 83. callback
+deactivate CommentService
+CreateCommentPage -> UpdateLessonPage: 84. redirect to ../updateLesson
+deactivate UpdateLessonPage
+deactivate CreateCommentPage
+end
+end
+
+@enduml
