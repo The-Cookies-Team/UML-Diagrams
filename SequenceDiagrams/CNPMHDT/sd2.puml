@@ -51,25 +51,25 @@ loop forEach List<InvoiceItem>
 CourseController -> CourseModel: 14. call model
 
 activate CourseModel
-CourseModel -> Database: 15. Course.find({courseId})
+CourseModel -> Database: 15. Course.findById(courseId)
 deactivate CourseModel
 
 activate Database
-Database --> CourseController: 16. return List<Course>
+Database --> CourseController: 16. return Course
+CourseController -> CourseController: 17. List<Course>.add(Course)
 deactivate Database
 
 end
 
-CourseController --> CourseService: 17. send res.json
+CourseController --> CourseService: 18. send res.json
 deactivate CourseController
-
-CourseService --> HomePage: 18. return List<Course>
+CourseService --> HomePage: 19. return List<Course>
 deactivate CourseService
 
 loop forEach List<Course>
+HomePage -> CourseCard: 20. call component
 activate CourseCard
-HomePage -> CourseCard: 19. call component
-CourseCard --> HomePage: 20. display data
+CourseCard --> HomePage: 21. display data
 deactivate CourseCard
 end
 

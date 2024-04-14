@@ -116,6 +116,7 @@ DocumentService --> UpdateLessonPage: 39. return List<Document>
 deactivate DocumentService
 
 UpdateLessonPage -> CommentService: 40. getListCommentsOfLesson(lessonId)
+activate CommentService
 CommentService -> CommentController: 41. router.get(\n"/getListCommentsOfLesson",\ngetListCommentsOfLesson)
 activate CommentController
 CommentController -> CommentModel: 42. call model
@@ -128,7 +129,7 @@ deactivate Database
 CommentController --> CommentService: 45. send res.json
 deactivate CommentController
 CommentService --> UpdateLessonPage: 46. return List<Comment>
-
+deactivate CommentService
 loop forEach List<Document>
 
 UpdateLessonPage -> Document: 47. call component
@@ -171,11 +172,11 @@ opt user deletes a document
 UpdateLessonPage -> UpdateLessonPage: 61. handleDelete()
 UpdateLessonPage -> DocumentService: 62. deleteDocument(_id)
 activate DocumentService
-DocumentService -> DocumentController: 63. router.delete("/", deleteDocument)
+DocumentService -> DocumentController: 63. router.delete("/deleteDocument:id", deleteDocument)
 activate DocumentController
 DocumentController -> DocumentModel: 64. call model
 activate DocumentModel
-DocumentModel -> Database: 65. Document.findById(req.id)
+DocumentModel -> Database: 65. Document.findById(req.params.id)
 deactivate DocumentModel
 Database --> DocumentController: 66. return Document
 DocumentController -> DocumentModel: 67. call model

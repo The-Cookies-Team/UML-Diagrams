@@ -52,7 +52,7 @@ deactivate Database
 loop forEach List<CartItem>
 CourseController -> CourseModel: 14. call model
 activate CourseModel
-CourseModel -> Database: 15. Course.find({courseId})
+CourseModel -> Database: 15. Course.findById(courseId)
 deactivate CourseModel
 activate Database
 deactivate CourseModel
