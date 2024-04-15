@@ -1,5 +1,7 @@
 @startuml
 
+autonumber
+
 title SD2. Xem danh sách khóa học theo tiêu chí
 
 actor "Student" as Actor
