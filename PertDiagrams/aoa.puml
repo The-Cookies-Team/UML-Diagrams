@@ -1,4 +1,4 @@
-@startuml
+@startuml AOA
 
 (1) -> (2): A (2)
 (2) -> (3): B (2)
