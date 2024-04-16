@@ -1,5 +1,7 @@
 @startuml
 
+autonumber
+
 title SD15. Đăng ký tài khoản giáo viên
 
 actor "Instructor" as Actor
@@ -8,13 +10,13 @@ control "UserService"
 control "UserController"
 
 activate Actor
-Actor -> RegisterInstructorPage: 1. redirect to ../registerIntructor
+Actor -> RegisterInstructorPage: input (name, email, content)
 deactivate Actor
 activate RegisterInstructorPage
-RegisterInstructorPage -> RegisterInstructorPage: 2. handleRegister()
+RegisterInstructorPage -> RegisterInstructorPage: handleRegister()
 RegisterInstructorPage -> UserService: 3. registerInstructor(name, email, content)
 activate UserService
-UserService -> UserController: 4. router.post("/registerInstructor", registerInstructor)
+UserService -> UserController: 4. fetch POST "/registerInstructor"
 activate UserController
 UserController -> NodeMailer: 5. registerInstructor()
 activate NodeMailer

@@ -19,7 +19,7 @@ entity "CartItemModel"
 database "Database" as Database
 
 activate Actor
-Actor -> CartPage: 1. redirect to ../cart
+Actor -> CartPage: navigate("/cart")
 deactivate Actor
 
 activate CartPage

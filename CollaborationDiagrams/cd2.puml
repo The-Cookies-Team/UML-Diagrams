@@ -1,5 +1,10 @@
 @startuml
+actor Actor
+boundary View
+control Controller
+entity Model
 
-
-
+Actor -right--> (View) : 1. action\n2.another action
+(View) --> (Controller) : 3.
+(Controller) --> (Model) : 4.
 @enduml
