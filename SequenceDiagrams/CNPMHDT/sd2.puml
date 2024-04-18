@@ -15,68 +15,70 @@ entity "InvoiceItem"
 database "Database"
 
 activate Actor
-Actor -> HomePage: 1. redirect to ../home
-deactivate Actor
+Actor -> HomePage: redirect to ../home
 
 activate HomePage
-HomePage -> CourseService: 2. getNewestCourses()
+HomePage -> CourseService: getNewestCourses()
 
 activate CourseService
-CourseService -> CourseController: 3. router.get(\n"/getNewestCourses",\ngetNewsestCourse)
+CourseService -> CourseController: router.get(\n"/getNewestCourses",\ngetNewsestCourse)
 
 activate CourseController
-CourseController -> CourseModel: 4. call model
+CourseController -> CourseModel: call model
 
 activate CourseModel
-CourseModel -> Database: 5. Course.find()\n.sort({createdAt: "desc"}).limit(5)
+CourseModel -> Database: Course.find()\n.sort({createdAt: "desc"}).limit(5)
 deactivate CourseModel
 
 activate Database
-Database --> CourseController: 6. return List<Course>
+Database --> CourseController: return courses
 deactivate Database
 
-CourseController --> CourseService: 7. send res.json
-CourseService --> HomePage: 8. return List<Course>
-HomePage -> CourseService: 9. getBestSellerCourses()
-CourseService -> CourseController: 10. router.get(\n"/getBestSellerCourses",\ngetBestSellerCourses)
-CourseController -> InvoiceItem: 11. calls model
+CourseController --> CourseService: send res.json
+CourseService --> HomePage: return courses
+HomePage -> CourseService: getBestSellerCourses()
+CourseService -> CourseController: router.get(\n"/getBestSellerCourses",\ngetBestSellerCourses)
+CourseController -> InvoiceItem: call model
 
 activate InvoiceItem
-InvoiceItem -> Database: 12. InvoiceItem.aggregate()\n.sortByCount("courseId").limit(5)
+InvoiceItem -> Database: InvoiceItem.aggregate()\n.sortByCount("courseId").limit(5)
 deactivate InvoiceItem
 
 activate Database
-Database --> CourseController: 13. return List<InvoiceItem>
+Database --> CourseController: return invoiceItems
 deactivate Database
 
-loop forEach List<InvoiceItem>
-CourseController -> CourseModel: 14. call model
+loop forEach invoiceItems
+CourseController -> CourseModel: call model
 
 activate CourseModel
-CourseModel -> Database: 15. Course.findById(courseId)
+CourseModel -> Database: Course.findById(courseId)
 deactivate CourseModel
 
 activate Database
-Database --> CourseController: 16. return Course
-CourseController -> CourseController: 17. List<Course>.add(Course)
+Database --> CourseController: return course
+CourseController -> CourseController: courses.add(course)
 deactivate Database
 
 end
 
-CourseController --> CourseService: 18. send res.json
+CourseController --> CourseService: send res.json
 deactivate CourseController
-CourseService --> HomePage: 19. return List<Course>
+CourseService --> HomePage: return courses
 deactivate CourseService
 
-loop forEach List<Course>
-HomePage -> CourseCard: 20. call component
+loop forEach courses
+HomePage -> CourseCard: call component
 activate CourseCard
-CourseCard --> HomePage: 21. display data
+CourseCard --> HomePage: display data
 deactivate CourseCard
 end
 
-opt user clicks a course
-HomePage -> CourseIntro: 21. redirect to ../courseIntro
+opt view course intro
+Actor -> HomePage: choose course
+deactivate Actor
+
+HomePage -> CourseIntro: navigate("/courseIntro")
 deactivate HomePage
 
 ref over CourseIntro

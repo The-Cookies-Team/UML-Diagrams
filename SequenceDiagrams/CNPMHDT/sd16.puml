@@ -1,4 +1,6 @@
-@startuml
+@startuml SQ
+
+autonumber
 
 title SD16. Tạo khóa học
 
@@ -11,26 +13,25 @@ entity "CourseModel"
 database "Database" as Database
 
 activate Actor
-Actor -> CreateCoursePage: 1. redirect to ../createCourse
+Actor -> CreateCoursePage: redirect to ../createCourse
 deactivate Actor
 activate CreateCoursePage
-CreateCoursePage -> CreateCoursePage: 2. handleCreate()
-CreateCoursePage -> CourseService: 3. createCourse(userId)
+CreateCoursePage -> CourseService: createCourse(userId)
 activate CourseService
-CourseService -> CourseController: 4. router.post("/createCourse", createCourse)
+CourseService -> CourseController: router.post("/createCourse", createCourse)
 activate CourseController
-CourseController -> CourseModel: 5. call model
+CourseController -> CourseModel: call model
 activate CourseModel
-CourseModel -> Database: 6. Course.create({userId, title, picture,\ndescription, price, status, visibility})
+CourseModel -> Database: Course.create({userId, title, picture,\ndescription, price, status, visibility})
 deactivate CourseModel
 activate Database
-Database --> CourseController: 7. callback
+Database --> CourseController: callback
 deactivate Database
-CourseController --> CourseService: 8. send res.json
+CourseController --> CourseService: send res.json
 deactivate CourseController
-CourseService --> CreateCoursePage: 9. display message
+CourseService --> CreateCoursePage: display message
 deactivate CourseService
-CreateCoursePage -> MyCreatedCoursesPage: 10. redirect to ../myCreatedCourses
+CreateCoursePage -> MyCreatedCoursesPage: navigate("/myCreatedCourses")
 deactivate CreateCoursePage
 ref over MyCreatedCoursesPage
 **SD17. Quản lý danh sách khóa học đã tạo**

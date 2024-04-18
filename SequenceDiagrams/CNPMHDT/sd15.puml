@@ -1,4 +1,4 @@
-@startuml
+@startuml SQ
 
 autonumber
 
@@ -10,21 +10,20 @@ control "UserService"
 control "UserController"
 
 activate Actor
-Actor -> RegisterInstructorPage: input (name, email, content)
+Actor -> RegisterInstructorPage: input name, email, content
 deactivate Actor
 activate RegisterInstructorPage
-RegisterInstructorPage -> RegisterInstructorPage: handleRegister()
-RegisterInstructorPage -> UserService: 3. registerInstructor(name, email, content)
+RegisterInstructorPage -> UserService: registerInstructor(name, email, content)
 activate UserService
-UserService -> UserController: 4. fetch POST "/registerInstructor"
+UserService -> UserController: router.post(\n"/registerInstructor",\nregisterInstructor)
 activate UserController
-UserController -> NodeMailer: 5. registerInstructor()
+UserController -> NodeMailer: registerInstructor()
 activate NodeMailer
-NodeMailer --> UserController: 6. callback
+NodeMailer --> UserController: callback
 deactivate NodeMailer
-UserController --> UserService: 7. send res.json
+UserController --> UserService: send res.json
 deactivate UserController
-UserService --> RegisterInstructorPage: 8. display message
+UserService --> RegisterInstructorPage: display message
 deactivate RegisterInstructorPage
 deactivate UserService
 
