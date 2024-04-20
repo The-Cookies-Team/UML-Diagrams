@@ -1,18 +1,14 @@
 @startuml SQ
 autonumber
-title SD19h. Delete document
+title SD19h. Leave comment
 boundary "views/\nUpdateLessonPage" as UpdateLessonPage
 control "CommentService"
 control "CommentController"
 entity "CommentModel"
 database "Database" as Database
-alt add comment
 activate UpdateLessonPage
-UpdateLessonPage -> CommentService: createComment({lessonId, userId, content})
+UpdateLessonPage -> CommentService: createComment(lessonId, userId, parentId, content)
 activate CommentService
-else reply comment
-UpdateLessonPage -> CommentService: createComment({lessonId, userId, parentId})
-end
 CommentService -> CommentController: router.post("/createComment", createComment)
 activate CommentController
 CommentController -> CommentModel: call model

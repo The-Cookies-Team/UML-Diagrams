@@ -15,7 +15,9 @@ entity "CommentModel"
 database "Database" as Database
 activate Actor
 Actor -> UpdateCourseDetailPage: choose lesson
+activate UpdateCourseDetailPage
 UpdateCourseDetailPage -> UpdateLessonPage: navigate("/updateLesson")
+deactivate UpdateCourseDetailPage
 activate UpdateLessonPage
 UpdateLessonPage -> DocumentService: getLessonDocuments(lessonId)
 activate DocumentService
@@ -82,7 +84,7 @@ opt leave comment
 Actor -> UpdateLessonPage: input content on modal form
 deactivate Actor
 ref over UpdateLessonPage
-**SD19h. Leave document**
+**SD19h. Leave comment**
 end ref
 end
 
