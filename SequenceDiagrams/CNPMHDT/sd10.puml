@@ -6,8 +6,8 @@ title SD10. Quản lý giỏ hàng
 
 actor "Student" as Actor
 boundary "views/\nCartPage" as CartPage
-boundary "views/\nCourseIntro" as CourseIntro
-boundary "views/\nPayCoursePage" as PayCourse
+boundary "views/\nCourseIntroPage" as CourseIntro
+boundary "views/\nPayCoursesPage" as PayCourse
 boundary "components/\nCartItem" as CartItem
 control "CartService"
 control "CartController"
@@ -15,8 +15,6 @@ entity "CartModel"
 control "CourseService"
 control "CourseController"
 entity "CourseModel"
-control "CartItemService"
-control "CartItemController"
 entity "CartItemModel"
 database "Database" as Database
 
@@ -72,52 +70,37 @@ CartPage -> CartItem: call component
 activate CartItem
 CartItem --> CartPage: display data
 deactivate CartItem
+deactivate CartPage
 
 end
 
 opt view course intro
 Actor -> CartPage: choose course
+activate CartPage
 CartPage -> CourseIntro: navigate("/courseIntro")
+deactivate CartPage
+
 ref over CourseIntro
 **SD5. Xem giới thiệu khóa học**
 end ref
 end group
 
-opt delete cart item
-Actor -> CartPage: choose cart item
-CartPage -> CartService: deleteCartItem(cartId, courseId)
-activate CartService
-CartService -> CartController: router.delete(\n"/deleteCartItem",\ndeleteCartItem)
-activate CartController
-CartController -> CartItemModel: call model
-activate CartItemModel
-CartItemModel -> Database: CartItem.find({cartId, courseId})
-deactivate CartItemModel
-activate Database
-Database --> CartController: return cartItem
-deactivate Database
-CartController -> CartItemModel: call model
-activate CartItemModel
-CartItemModel -> Database: CartItem.deleteOne()
-deactivate CartItemModel
-activate Database
-Database --> CartController: callback
-deactivate Database
-CartController --> CartService: send res.json
-deactivate CartController
-CartService --> CartPage: display message
-deactivate CartService
-CartPage -> CartPage: update display
-end
-
 opt checkout courses
 Actor -> CartPage: check courses\nthen click checkout
-deactivate Actor
+activate CartPage
 CartPage -> PayCourse: navigate("/payCourses")
 deactivate CartPage
 
 ref over PayCourse
 **SD6. Mua khóa học**
+end ref
+end
+
+opt delete cart item
+Actor -> CartPage: choose cart item to delete
+deactivate Actor
+ref over CartPage
+**SD10a. Delete cart item**
 end ref
 end
 

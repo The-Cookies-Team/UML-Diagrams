@@ -6,22 +6,10 @@ title SD19. Cập nhật chi tiết khóa học
 
 actor "Instructor" as Actor
 boundary "views/\nUpdateCourseDetailPage" as UpdateCourseDetailPage
-boundary "views/\nUpdateLessonPage" as UpdateLessonPage
-boundary "views/\nCreateDocumentPage" as CreateDocumentPage
-boundary "views/\nCreateCommentPage" as CreateCommentPage
 boundary "components/\nLesson" as Lesson
-boundary "components/\nDocument" as Document
-boundary "components/\nComment" as Comment
-entity "CourseModel"
 control "LessonService"
 control "LessonController"
 entity "LessonModel"
-control "DocumentService"
-control "DocumentController"
-entity "DocumentModel"
-control "CommentService"
-control "CommentController"
-entity "CommentModel"
 database "Database" as Database
 
 activate Actor
@@ -47,182 +35,40 @@ UpdateCourseDetailPage -> Lesson: call component
 activate Lesson
 Lesson --> UpdateCourseDetailPage: display data
 deactivate Lesson
+deactivate UpdateCourseDetailPage
+end
+
+opt change course visibility
+Actor -> UpdateCourseDetailPage: click visibility box
+ref over UpdateCourseDetailPage
+**SD19a. Change course visibility**
+end ref
+end
+
+opt delete course
+Actor -> UpdateCourseDetailPage: click delete course button
+ref over UpdateCourseDetailPage
+**SD19b. Delete course**
+end ref
 end
 
 opt delete lesson
-Actor -> UpdateCourseDetailPage: choose lesson
-UpdateCourseDetailPage -> LessonService: deleteLesson(_id)
-activate LessonService
-LessonService -> LessonController: router.delete("/deleteLesson:id", deleteLesson)
-activate LessonController
-LessonController -> LessonModel: call model
-activate LessonModel
-LessonModel -> Database: Lesson.findById(req.params.id)
-deactivate LessonModel
-activate Database
-Database --> LessonController: return lesson
-deactivate Database
-LessonController -> LessonModel: call model
-activate LessonModel
-LessonModel -> Database: Lesson.deleteOne()
-deactivate LessonModel
-activate Database
-Database --> LessonController: callback
-deactivate Database
-LessonController --> LessonService: send res.json
-deactivate LessonController
-LessonService --> UpdateCourseDetailPage: display message
-deactivate LessonService
-UpdateCourseDetailPage -> UpdateCourseDetailPage: update display
+Actor -> UpdateCourseDetailPage: choose lesson to delete
+ref over UpdateCourseDetailPage
+**SD19c. Delete lesson**
+end ref
 end
 
 opt create lesson
-Actor -> UpdateCourseDetailPage: click create button
-UpdateCourseDetailPage -> LessonService: createLesson(courseId)
-activate LessonService
-LessonService -> LessonController: router.post("/createLesson", createLesson)
-activate LessonController
-LessonController -> LessonModel: call model
-activate LessonModel
-LessonModel -> Database: Lesson.create({courseId, title, description})
-deactivate LessonModel
-activate Database
-Database --> LessonController: return Lesson
-deactivate Database
-LessonController --> LessonService: send res.json
-deactivate LessonController
-LessonService --> UpdateCourseDetailPage: return lesson
-deactivate LessonService
-UpdateCourseDetailPage-> UpdateLessonPage: navigate("/updateLesson")
-activate UpdateLessonPage
-end
-
-opt view lesson
-Actor -> UpdateCourseDetailPage: choose lesson
-UpdateCourseDetailPage -> UpdateLessonPage: navigate("/updateLesson")
-deactivate UpdateCourseDetailPage
-UpdateLessonPage -> DocumentService: getLessonDocuments(lessonId)
-activate DocumentService
-DocumentService -> DocumentController: router.get(\n"/getLessonDocuments",\ngetLessonDocuments)
-activate DocumentController
-DocumentController -> DocumentModel: call model
-activate DocumentModel
-DocumentModel -> Database: Document.find({lessonid})
-deactivate DocumentModel
-activate Database
-Database --> DocumentController: return documents
-deactivate Database
-DocumentController --> DocumentService: send res.json
-deactivate DocumentController
-DocumentService --> UpdateLessonPage: return documents
-deactivate DocumentService
-
-UpdateLessonPage -> CommentService: getLessonComments(lessonId)
-activate CommentService
-CommentService -> CommentController: router.get(\n"/getLessonComments",\ngetLessonComments)
-activate CommentController
-CommentController -> CommentModel: call model
-activate CommentModel
-CommentModel -> Database: Comment.find({lessonId})
-deactivate CommentModel
-activate Database
-Database --> CommentController: return comments
-deactivate Database
-CommentController --> CommentService: send res.json
-deactivate CommentController
-CommentService --> UpdateLessonPage: return comments
-deactivate CommentService
-loop forEach documents
-
-UpdateLessonPage -> Document: call component
-activate Document
-Document --> UpdateLessonPage: display data
-deactivate Document
-end
-
-loop forEach comments
-UpdateLessonPage -> Comment: call component
-activate Comment
-Comment --> UpdateLessonPage: display data
-deactivate Comment
-end
-
-opt create document
-Actor -> UpdateLessonPage: click create button
-UpdateLessonPage -> CreateDocumentPage: navigate("/createDocument")
-activate CreateDocumentPage
-CreateDocumentPage -> DocumentService: createDocument(lessonId)
-activate DocumentService
-DocumentService -> DocumentController: router.post("/createDocument", createDocument)
-activate DocumentController
-DocumentController -> DocumentModel: call model
-activate DocumentModel
-DocumentModel -> Database: Document.create({lessonId, title, description})
-deactivate DocumentModel
-activate Database
-Database --> DocumentController: callback
-deactivate Database
-DocumentController --> DocumentService: send res.json
-deactivate DocumentController
-DocumentService --> CreateDocumentPage: callback
-deactivate DocumentService
-CreateDocumentPage -> UpdateLessonPage: navigate("/updateLesson")
-deactivate CreateDocumentPage
-end
-
-opt delete document
-Actor -> UpdateLessonPage: choose document
-UpdateLessonPage -> DocumentService: deleteDocument(_id)
-activate DocumentService
-DocumentService -> DocumentController: router.delete("/deleteDocument:id", deleteDocument)
-activate DocumentController
-DocumentController -> DocumentModel: call model
-activate DocumentModel
-DocumentModel -> Database: Document.findById(req.params.id)
-deactivate DocumentModel
-Database --> DocumentController: return Document
-DocumentController -> DocumentModel: call model
-activate DocumentModel
-DocumentModel -> Database: Document.deleteOne()
-deactivate DocumentModel
-activate Database
-Database --> DocumentController: callback
-deactivate Database
-DocumentController --> DocumentService: send res.json
-deactivate DocumentController
-DocumentService --> UpdateLessonPage: callback
-deactivate DocumentService
-UpdateLessonPage -> UpdateLessonPage: update display
-end
-
-opt access comment section
-Actor -> UpdateLessonPage: click add comment button
+Actor -> UpdateCourseDetailPage: input title, description on modal form
 deactivate Actor
-UpdateLessonPage -> CreateCommentPage: navigate("/createComment")
-activate CreateCommentPage
-alt add comment
-CreateCommentPage -> CommentService: createComment({lessonId, userId})
-activate CommentService
-else reply comment
-CreateCommentPage -> CommentService: createComment({lessonId, userId, parentId})
+ref over UpdateCourseDetailPage
+**SD19d. Create lesson**
+end ref
 end
-CommentService -> CommentController: router.post("/createComment", createComment)
-activate CommentController
-CommentController -> CommentModel: call model
-activate CommentModel
-CommentModel -> Database: Comment.create(\n{lessonId, userId, parentId, title, description})
-deactivate CommentModel
-activate Database
-Database --> CommentController: callback
-deactivate Database
-CommentController --> CommentService: send res.json
-deactivate CommentController
-CommentService --> CreateCommentPage: callback
-deactivate CommentService
-CreateCommentPage -> UpdateLessonPage: navigate("/updateLesson")
-deactivate UpdateLessonPage
-deactivate CreateCommentPage
-end
-end
+
+ref over Actor
+**SD19e. View lesson**
+end ref
 
 @enduml

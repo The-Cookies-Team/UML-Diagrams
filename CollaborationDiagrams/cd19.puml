@@ -1,0 +1,28 @@
+@startuml CD
+
+title CD19. Cập nhật chi tiết khóa học
+
+actor "Instructor" as Actor
+boundary "UpdateCourseDetailPage"
+boundary "UpdateLessonPage"
+boundary "CreateDocumentPage"
+boundary "CreateCommentPage"
+control "LessonController"
+entity "LessonModel"
+control "DocumentController"
+entity "DocumentModel"
+control "CommentController"
+entity "CommentModel"
+
+Actor - UpdateCourseDetailPage: \l1. accessPage()<&arrow-right>\n5. chooseLessonToDelete()<&arrow-right>\n9. inputLessonData(title, description)<&arrow-right>
+UpdateCourseDetailPage - LessonController: \l2. getCourseLessons(courseId)<&arrow-right>\n<&arrow-left>4. displayLessons()\n6. deleteLesson(_id)<&arrow-right>\n10. createLesson(courseId, title, description)<&arrow-right>
+LessonController -- LessonModel: \l<&arrow-bottom>3. Lesson.find({courseId})\n<&arrow-bottom>7. Lesson.findById(req.params.id)\n<&arrow-bottom>8. Lesson.updateOne({status: false})\n<&arrow-bottom>11. Lesson.create({courseId, title, description})
+UpdateCourseDetailPage -- UpdateLessonPage: \l<&arrow-bottom>12.navigate("/updateLesson")
+Actor - UpdateLessonPage: \l<&arrow-bottom>19. clickCreateDocumentButton()\n<&arrow-bottom>23. clickCreateCommentButton()
+UpdateLessonPage -- DocumentController: \l<&arrow-bottom>13. getLessonDocuments(lessonId)\n<&arrow-top>15. displayDocuments()
+DocumentController - DocumentModel: \l14. Document.find({lessonId})<&arrow-right>\n22. Document.create({lessonId, title, type, description})<&arrow-right>
+UpdateLessonPage -- CommentController: \l<&arrow-bottom>16. getLessonComments(lessonId)\n<&arrow-top>18. displayComments()
+CommentController - CommentModel: \l17. Comment.find({lessonId})<&arrow-right>
+UpdateLessonPage -- DocumentController: \l21. createDocuemnt(lessonId)<&arrow-right>
+
+@enduml

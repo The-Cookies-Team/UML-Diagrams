@@ -6,12 +6,12 @@ title SD2. Xem danh sách khóa học theo tiêu chí
 
 actor "Student" as Actor
 boundary "views/\nHomePage" as HomePage
-boundary "views/\nCourseIntro" as CourseIntro
+boundary "views/\nCourseIntroPage" as CourseIntro
 boundary "components/\nCourseCard" as CourseCard
 control "CourseService"
 control "CourseController"
 entity "CourseModel"
-entity "InvoiceItem"
+entity "InvoiceItemModel"
 database "Database"
 
 activate Actor
@@ -38,17 +38,17 @@ CourseController --> CourseService: send res.json
 CourseService --> HomePage: return courses
 HomePage -> CourseService: getBestSellerCourses()
 CourseService -> CourseController: router.get(\n"/getBestSellerCourses",\ngetBestSellerCourses)
-CourseController -> InvoiceItem: call model
+CourseController -> InvoiceItemModel: call model
 
-activate InvoiceItem
-InvoiceItem -> Database: InvoiceItem.aggregate()\n.sortByCount("courseId").limit(5)
-deactivate InvoiceItem
+activate InvoiceItemModel
+InvoiceItemModel -> Database: InvoiceItemModel.aggregate()\n.sortByCount("courseId").limit(5)
+deactivate InvoiceItemModel
 
 activate Database
-Database --> CourseController: return invoiceItems
+Database --> CourseController: return InvoiceItemModels
 deactivate Database
 
-loop forEach invoiceItems
+loop forEach InvoiceItemModels
 CourseController -> CourseModel: call model
 
 activate CourseModel
