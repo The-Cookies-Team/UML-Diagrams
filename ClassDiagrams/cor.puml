@@ -1,6 +1,6 @@
 @startuml CD
 
-title "Traveling System"
+title "Travelling System"
 
 abstract TransportHandler {
 
