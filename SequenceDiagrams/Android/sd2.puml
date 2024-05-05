@@ -1,0 +1,13 @@
+@startuml Sq
+
+title SD1. Đăng ký
+
+actor "User"
+boundary "RegisterPage"
+control "UserController"
+entity "User"
+database "Database"
+
+User -> RegisterPage
+
+@enduml
