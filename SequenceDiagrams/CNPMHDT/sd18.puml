@@ -1,0 +1,37 @@
+@startuml SQ
+
+autonumber
+
+title SD16. Tạo khóa học
+
+actor "Instructor" as Actor
+boundary "EditCourseIntro"
+boundary "UpdateCourseIntro"
+control "CourseService"
+control "CourseController"
+entity "CourseModel"
+database "Database" as Database
+
+activate Actor
+Actor -> EditCourseIntro: update title, topic, image, description
+deactivate Actor
+activate EditCourseIntro
+EditCourseIntro -> CourseService: updateCourseIntro({\n_id, title, price, description, topic, picture})
+activate CourseService
+CourseService -> CourseController: router.put("/update-course-intro/:id",\nauth, updateCourseIntro)
+activate CourseController
+CourseController -> CourseModel: call model
+activate CourseModel
+CourseModel -> Database: Course.updateOne({title, picture,\ndescription, price, topic})
+deactivate CourseModel
+activate Database
+Database --> CourseController: callback
+deactivate Database
+CourseController --> CourseService: send res.json
+deactivate CourseController
+CourseService --> EditCourseIntro: callback
+deactivate CourseService
+EditCourseIntro -> UpdateCourseIntro: navigate("/update-course-intro")
+deactivate EditCourseIntro
+
+@enduml

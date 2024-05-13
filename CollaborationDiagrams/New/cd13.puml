@@ -1,0 +1,17 @@
+@startuml CD
+
+title CD13. Tạo khóa học
+
+actor "Instructor"
+boundary "CreateCourse"
+boundary "MyCreatedCourses"
+control "CourseService"
+control "CourseController"
+entity "CourseModel"
+
+Instructor - CreateCourse
+CreateCourse - CourseService
+CourseService - CourseController
+CourseController -- CourseModel
+CreateCourse -- MyCreatedCourses
+@enduml
