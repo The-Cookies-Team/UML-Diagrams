@@ -9,9 +9,9 @@ control "CourseService"
 control "CourseController"
 entity "CourseModel"
 
-Instructor - CreateCourse
-CreateCourse - CourseService
-CourseService - CourseController
-CourseController -- CourseModel
-CreateCourse -- MyCreatedCourses
+Instructor - CreateCourse: \l1. inputData()<&arrow-right>
+CreateCourse - CourseService: \l2. handleCreate()<&arrow-right>
+CourseService - CourseController: \l3. createCourse()<&arrow-right>
+CourseController -- CourseModel: \l<&arrow-bottom>4. Course.create()
+CreateCourse -- MyCreatedCourses: \l<&arrow-bottom>5. navigate("/")
 @enduml

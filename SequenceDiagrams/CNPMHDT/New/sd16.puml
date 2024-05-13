@@ -1,0 +1,61 @@
+@startuml SQ
+
+autonumber
+
+title SD16. Cập nhật chi tiết khóa học
+
+actor "Instructor"
+boundary "UpdateCourseDetails"
+boundary "UpdateLessonDetails"
+boundary "CreateLesson"
+control "LessonService"
+control "LessonController"
+entity "LessonModel"
+database "Database" as Database
+
+Instructor -> UpdateCourseDetails: click "Create Lesson"
+UpdateCourseDetails -> CreateLesson: navigate("/create-lesson")
+Instructor -> CreateLesson: input {tile, description}
+CreateLesson -> LessonService: handleCreate()
+LessonService -> LessonController: createLesson(\n{lessonId, title, description})
+LessonController -> LessonModel: call model
+LessonModel -> Database: Lesson.create()
+Database --> LessonController: callback
+LessonController --> LessonService: send res.json
+LessonService --> CreateLesson: callback
+
+alt input is empty
+CreateLesson -> CreateLesson: display alert
+else input is not empty
+CreateLesson -> UpdateCourseDetails: navigate(\n"/update-course-details")
+end
+
+opt edit lesson details
+Instructor -> UpdateCourseDetails: click "Edit Lesson" on a lesson
+UpdateCourseDetails -> UpdateLessonDetails: navigate(\n"/update-lesson-details")
+ref over UpdateLessonDetails
+**SD17. Cập nhật chi tiết bài học**
+end ref
+end
+
+opt update lesson
+Instructor -> UpdateCourseDetails: click "Edit" button on a lesson
+ref over UpdateCourseDetails
+**SD16a. Update lesson**
+end ref
+end
+
+opt delete lesson
+Instructor -> UpdateCourseDetails: click "Delete" button on a lesson
+ref over UpdateCourseDetails
+**SD16b. Delete lesson**
+end ref
+end
+
+opt delete course
+Instructor -> UpdateCourseDetails: click "Delete Course"
+ref over UpdateCourseDetails
+**SD16c. Delete Course**
+end ref
+end
+@enduml

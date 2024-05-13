@@ -1,0 +1,27 @@
+@startuml SQ
+
+autonumber
+
+title SD16a. Update lesson
+
+boundary "UpdateCourseDetails"
+boundary "UpdateLesson"
+control "LessonService"
+control "LessonController"
+entity "LessonModel"
+database "Database" as Database
+
+UpdateCourseDetails -> UpdateLesson: navigate("/update-lesson")
+UpdateLesson -> LessonService: handleUpdate(_id)
+LessonService -> LessonController: updateLesson(\n{_id, title, description})
+LessonController -> LessonModel: call model
+LessonModel -> Database: Lesson.updateOne()
+Database --> LessonController: callback
+LessonController --> LessonService: send res.json
+LessonService --> UpdateLesson: callback
+alt input is empty
+UpdateLesson -> UpdateLesson: display alert
+else input is not empty
+UpdateLesson -> UpdateCourseDetails: navigate(\n"/update-course-details")
+end
+@enduml

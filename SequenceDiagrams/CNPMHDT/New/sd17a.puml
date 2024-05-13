@@ -1,0 +1,23 @@
+@startuml SQ
+
+autonumber
+
+title SD17a. Delete document
+
+boundary "UpdateLessonDetails"
+control "DocumentService"
+control "DocumentController"
+entity "DocumentModel"
+database "Database" as Database
+
+UpdateLessonDetails -> DocumentService: handleDelete(_id)
+DocumentService -> DocumentController: deleteLesson(_id)
+DocumentController -> DocumentModel: call model
+DocumentModel -> Database: Lesson.deleteOne()
+Database --> DocumentController: callback
+DocumentController --> DocumentService: send res.json
+DocumentService --> UpdateLessonDetails: callback
+UpdateLessonDetails -> UpdateLessonDetails: update display
+
+
+@enduml

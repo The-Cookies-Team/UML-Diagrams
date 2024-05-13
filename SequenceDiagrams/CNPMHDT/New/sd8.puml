@@ -1,0 +1,40 @@
+@startuml SQ
+
+autonumber
+
+title SD8. Xem thông tin chi tiết khóa học
+
+Actor Student
+boundary "CourseDetails"
+boundary "LessonDetails"
+boundary "CreateComment"
+control "CommentService"
+control "CommentController"
+entity "CommentModel"
+database "Database" as Database
+
+activate Student
+Student -> CourseDetails: click "Views Lesson\n Details" on a lesson
+activate CourseDetails
+CourseDetails -> LessonDetails: navigate(\n"/lesson-details")
+deactivate CourseDetails
+opt create comment
+Student -> LessonDetails: click "Leave Comment"
+LessonDetails -> CreateComment: navigate(\n"/create-comment")
+Student ->  CreateComment: input content
+deactivate Student
+CreateComment -> CommentService: handleCreate(\n{lessonId, content})
+CommentService -> CommentController: createComment(\n{lessonId, content})
+CommentController -> CommentModel: call model
+CommentModel -> Database: Comment.create()
+Database --> CommentController: callback
+CommentController --> CommentService: send res.json
+CommentService --> CreateComment: callback
+alt content is empty 
+CreateComment -> CreateComment: display alert
+else content is not empty
+CreateComment -> LessonDetails: navigate(\n"/lesson-details")
+end
+end
+
+@enduml

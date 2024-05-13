@@ -18,7 +18,7 @@ deactivate Actor
 activate CreateCourse
 CreateCourse -> CourseService: handleCreate()
 activate CourseService
-CourseService -> CourseController: createCourse({title, topic,\nprice, picture, description})
+CourseService -> CourseController: createCourse({formData})
 activate CourseController
 CourseController -> CourseModel: call model
 activate CourseModel
@@ -31,11 +31,18 @@ CourseController --> CourseService: send res.json
 deactivate CourseController
 CourseService --> CreateCourse: callback
 deactivate CourseService
+
+alt input is empty
+CreateCourse -> CreateCourse: display alert
+else input is not empty
 CreateCourse -> MyCreatedCourses: navigate("/")
 deactivate CreateCourse
 ref over MyCreatedCourses
 **SD17. Quản lý danh sách**
 **khóa học đã tạo**
 end ref
+end
+
+
 
 @enduml

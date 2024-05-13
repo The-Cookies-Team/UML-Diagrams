@@ -1,0 +1,47 @@
+@startuml SQ
+
+autonumber
+
+title SD17. Cập nhật chi tiết bài học
+
+actor "Instructor"
+boundary "UpdateLessonDetails"
+boundary "CreateDocument"
+boundary "CreateComment"
+control "DocumentService"
+control "DocumentController"
+entity "DocumentModel"
+database "Database" as Database
+
+Instructor -> UpdateLessonDetails: click "Create Document"
+UpdateLessonDetails -> CreateDocument: navigate(\n"/create-document")
+Instructor -> CreateDocument: input {title, description, content}
+CreateDocument -> DocumentService: handleCreate()
+DocumentService -> DocumentController: createDocument(formData)
+DocumentController -> DocumentModel: call model
+DocumentModel -> Database: Document.create()
+Database --> DocumentController: callback
+DocumentController --> DocumentService: send res.json
+DocumentService --> CreateDocument: callback
+
+alt input is empty
+CreateDocument -> CreateDocument: display alert
+else
+CreateDocument -> UpdateLessonDetails: navigate(\n"/update-lesson-details")
+end
+
+opt delete document
+Instructor -> UpdateLessonDetails: click "Delete" button on a lesson
+ref over UpdateLessonDetails
+**SD17a. Delete document**
+end ref
+end
+
+opt create comment
+Instructor -> UpdateLessonDetails: click "Leave Comment"
+UpdateLessonDetails -> CreateComment: navigate(\n"/create-comment")
+ref over CreateComment
+**SD17b. Create comment**
+end ref
+end
+@enduml
