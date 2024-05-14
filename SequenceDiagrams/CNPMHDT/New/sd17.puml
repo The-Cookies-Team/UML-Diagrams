@@ -16,8 +16,8 @@ activate Instructor
 Instructor -> UpdateLessonDetails: click "Create Document"
 activate UpdateLessonDetails
 UpdateLessonDetails -> CreateDocument: navigate(\n"/create-document")
-activate CreateDocument
 deactivate UpdateLessonDetails
+activate CreateDocument
 Instructor -> CreateDocument: input {title, description, content}
 CreateDocument -> DocumentService: handleCreate()
 activate DocumentService
@@ -43,7 +43,7 @@ deactivate CreateDocument
 end
 
 opt delete document
-Instructor -> UpdateLessonDetails: click "Delete" button on a lesson
+Instructor -> UpdateLessonDetails: click "Delete" button on a document
 ref over UpdateLessonDetails
 **SD17a. Delete document**
 end ref
