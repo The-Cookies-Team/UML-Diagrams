@@ -9,7 +9,7 @@ boundary "MyCreatedCourses"
 boundary "EditCourse"
 boundary "UpdateCourseIntro"
 boundary "UpdateCourseDetails"
-
+activate Instructor
 Instructor -> MyCreatedCourses: click "Edit" on a course
 activate MyCreatedCourses
 MyCreatedCourses -> EditCourse: navigate("/edit-course")

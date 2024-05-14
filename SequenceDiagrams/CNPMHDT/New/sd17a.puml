@@ -10,14 +10,26 @@ control "DocumentController"
 entity "DocumentModel"
 database "Database" as Database
 
+activate UpdateLessonDetails
 UpdateLessonDetails -> DocumentService: handleDelete(_id)
+activate DocumentService
 DocumentService -> DocumentController: deleteLesson(_id)
+activate DocumentController
 DocumentController -> DocumentModel: call model
-DocumentModel -> Database: Lesson.deleteOne()
+activate DocumentModel
+DocumentModel -> Database: Document.deleteOne()
+deactivate DocumentModel
+activate Database
 Database --> DocumentController: callback
+deactivate Database
 DocumentController --> DocumentService: send res.json
+deactivate DocumentController
 DocumentService --> UpdateLessonDetails: callback
+deactivate DocumentService
 UpdateLessonDetails -> UpdateLessonDetails: update display
+activate UpdateLessonDetails
+deactivate UpdateLessonDetails
+deactivate UpdateLessonDetails
 
 
 @enduml

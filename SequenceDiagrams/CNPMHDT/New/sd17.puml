@@ -12,22 +12,34 @@ control "DocumentService"
 control "DocumentController"
 entity "DocumentModel"
 database "Database" as Database
-
+activate Instructor
 Instructor -> UpdateLessonDetails: click "Create Document"
+activate UpdateLessonDetails
 UpdateLessonDetails -> CreateDocument: navigate(\n"/create-document")
+activate CreateDocument
+deactivate UpdateLessonDetails
 Instructor -> CreateDocument: input {title, description, content}
 CreateDocument -> DocumentService: handleCreate()
+activate DocumentService
 DocumentService -> DocumentController: createDocument(formData)
+activate DocumentController
 DocumentController -> DocumentModel: call model
+activate DocumentModel
 DocumentModel -> Database: Document.create()
+deactivate DocumentModel
+activate Database
 Database --> DocumentController: callback
+deactivate Database
 DocumentController --> DocumentService: send res.json
+deactivate DocumentController
 DocumentService --> CreateDocument: callback
+deactivate DocumentService
 
 alt input is empty
 CreateDocument -> CreateDocument: display alert
 else
 CreateDocument -> UpdateLessonDetails: navigate(\n"/update-lesson-details")
+deactivate CreateDocument
 end
 
 opt delete document
@@ -39,7 +51,10 @@ end
 
 opt create comment
 Instructor -> UpdateLessonDetails: click "Leave Comment"
+deactivate Instructor
+activate UpdateLessonDetails
 UpdateLessonDetails -> CreateComment: navigate(\n"/create-comment")
+deactivate UpdateLessonDetails
 ref over CreateComment
 **SD17b. Create comment**
 end ref
