@@ -37,7 +37,7 @@ deactivate DocumentService
 
 alt input is empty
 CreateDocument -> CreateDocument: display alert
-else
+else input is not empty
 CreateDocument -> UpdateLessonDetails: navigate(\n"/update-lesson-details")
 deactivate CreateDocument
 end

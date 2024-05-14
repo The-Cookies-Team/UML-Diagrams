@@ -32,7 +32,7 @@ CourseService --> UpdateCourseIntro: callback
 deactivate CourseService
 alt input is empty
 UpdateCourseIntro -> UpdateCourseIntro: display alert
-else
+else input is not empty
 UpdateCourseIntro -> EditCourse: navigate("/edit-course")
 deactivate UpdateCourseIntro
 end
