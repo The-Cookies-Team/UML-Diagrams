@@ -10,8 +10,8 @@ control "PostController" as controller
 entity "PostModel" as model
 database "Database" as database
 
-actor -> view: enter search values
 activate actor
+actor -> view: enter search values
 activate view
 view -> controller: call API /list
 activate controller
